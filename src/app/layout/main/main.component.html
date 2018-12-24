@@ -1,0 +1,26 @@
+<div class="header">
+    <div class="header_left">
+        <a href="javascript:;" routerLink="/main">
+            <img src="../assets/image/timg.jpg" alt="logo" class="logo">
+        </a>
+    </div>
+    <div class="header_right">
+        <div *ngIf="!isLoginIn" class="unlogin_in_box">
+        <a href="javascript:;">登录</a>
+        <a href="javascript:;">注册</a>
+        </div>
+        <div *ngIf="isLoginIn" class="login_in_box">
+            <nz-dropdown [nzPlacement]="'bottomRight'">
+            <a nz-dropdown class="header_avtar" >
+                <nz-avatar nzIcon="user" nzSrc="//zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"></nz-avatar>
+                <span>galaxyxd</span>
+            </a>
+            <ul nz-menu nzSelectable>
+                <li nz-menu-item>账户信息</li>
+                <li nz-menu-item>注销</li>
+            </ul>
+            </nz-dropdown>
+        </div>  
+    </div>
+</div>
+<router-outlet></router-outlet>
