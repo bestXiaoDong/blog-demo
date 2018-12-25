@@ -13,11 +13,21 @@ import { registerLocaleData } from '@angular/common';
 import zh from '@angular/common/locales/zh';
 registerLocaleData(zh);
 
+/** 拦截器 **/ 
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+
+import { TestInterceptor } from './layout/interceptors/test-interceptor';
+
+const httpInterceptorsProviders = [
+  { provide: HTTP_INTERCEPTORS, useClass: TestInterceptor, multi: true}
+];
 
 import { MainComponent } from './layout/main/main.component';
 import { LoginComponent } from './layout/login/login.component';
+import { ListComponent } from './layout/main/list/list.component';
+import { TestComponent } from './layout/test/test.component';
 
-const COMPONENTS = [MainComponent, LoginComponent];
+const COMPONENTS = [MainComponent, LoginComponent, ListComponent, TestComponent];
 
 @NgModule({
   declarations: [
@@ -34,7 +44,7 @@ const COMPONENTS = [MainComponent, LoginComponent];
     NgZorroAntdModule
   ],
   /** 配置 ng-zorro-antd 国际化 **/
-  providers   : [ { provide: NZ_I18N, useValue: zh_CN } ],
+  providers   : [ { provide: NZ_I18N, useValue: zh_CN } , httpInterceptorsProviders],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

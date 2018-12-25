@@ -6,8 +6,9 @@ import {
     FormControl,
     ValidationErrors
   } from '@angular/forms';
-import { Observable, Observer, Subject} from 'rxjs';
-import { distinctUntilChanged, debounceTime, switchMap } from 'rxjs/operators';
+import { Observable, Observer, Subject, throwError} from 'rxjs';
+import { distinctUntilChanged, debounceTime, switchMap, catchError, retry, tap } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-login',
@@ -24,7 +25,10 @@ export class LoginComponent implements OnInit {
     usernameValidator$: Observable<any>;  // 用户验证
     userNameText$ = new Subject<string>();  // 用户名
 
-    constructor(private fb: FormBuilder) {
+    constructor(
+      private fb: FormBuilder,
+      private http: HttpClient
+    ) {
     }
 
     ngOnInit(): void {
@@ -107,11 +111,38 @@ export class LoginComponent implements OnInit {
      * 提交登录表单
      */
     submitLogin(): void {
-      for (const i in this.loginForm.controls) {
-        this.loginForm.controls[ i ].markAsDirty();
-        this.loginForm.controls[ i ].updateValueAndValidity();
-      }
+      const jsonUrl = '../../assets/mock/_mock.json';
+      this.http.get(jsonUrl)
+      .pipe(
+        retry(3),
+        tap(
+          data => console.log(jsonUrl, data),
+          error => console.log(error)
+        ),
+        catchError(this.handleError)
+      )
+      .subscribe(
+        (data) => console.log(data),
+        error => console.log(error)
+      )
+      // for (const i in this.loginForm.controls) {
+      //   this.loginForm.controls[ i ].markAsDirty();
+      //   this.loginForm.controls[ i ].updateValueAndValidity();
+      // }
     }
+
+    private handleError(error: HttpErrorResponse) {
+      if (error.error instanceof ErrorEvent) {
+        console.log('an error occurred:' + error.error.message)
+      } else {
+        console.error(
+          `backend returned code ${error.status}` +
+          `body was : ${error.error}`
+        )
+      }
+      return throwError('Something bad happened; please try again later.');
+    }
+
     /**
      * 提交注册表单
      * @param $event 
